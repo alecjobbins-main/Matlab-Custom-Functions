@@ -1,0 +1,66 @@
+function [] = VITA_spot_detection(t, x, M, threshold)
+    %% Can be used to detect where "spots" begin and end relative to a threshold
+    %% Applications include detecting sharp gradients, etc.
+    % t = signal time array
+    % x = signal
+    % M = blocks of length M
+    
+    N = length(x);
+    K = floor(N / M); % number of blocks to break data into
+    t = t(1:M*K); % truncate data if blocks are overflowing
+    x = x(1:M*K); % truncate data if blocks are overflowing (if M*K = N we have no problem)
+
+    % Reshape data into blocks and compute variance and centered time
+    xx = reshape(x,M,K);
+    variance = std(xx).^2;
+
+    tt = reshape(t,M,K);
+    T_variable = mean(tt);
+
+    detection = variance > threshold;
+    threshold_line = threshold*ones(size(T_variable));
+
+    figure();
+    plot(T_variable, variance);
+    hold on;
+    plot(T_variable, threshold_line);
+    ylabel('Local Variance', 'FontSize',16);
+    xlabel('Centered Time [s]', 'FontSize',16);
+    title('Local Variance', 'FontSize', 14);
+    legend("Points Per Block = " + num2str(M) + ", Number of Blocks = " + num2str(K), "Threshold = " + num2str(threshold));
+    grid on;
+
+
+    figure();
+    plot(T_variable, detection);
+    xlabel('Centered Time [s]', 'FontSize',16);
+    title('Detection (variance > threshold)', 'FontSize', 14);
+    legend("Threshold = " + num2str(threshold) + ", Points Per Block = " + num2str(M) + ", Number of Blocks = " + num2str(K));
+    grid on;
+
+
+    IBegin = find(diff(detection) == 1);
+    Iend = find(diff(detection) == -1);
+
+    Tduration = 1000*(T_variable(Iend) - T_variable(IBegin));
+    figure();
+    plot(T_variable(IBegin), Tduration, 'ob');
+    grid on;
+    xlabel('Centered Time [sec]', 'FontSize', 16);
+    ylabel('Duration Time [msec]', 'FontSize', 16);
+    title('Spot Duration [msec]', 'FontSize', 14);
+
+    figure();
+    plot(T_variable, variance);
+    hold on;
+    threshold_level = threshold*ones(size(T_variable(IBegin)));
+    plot(T_variable(IBegin), threshold_level, 'ob');
+    hold on;
+    threshold_level = threshold*ones(size(T_variable(Iend)));
+    plot(T_variable(Iend), threshold_level, '*r');
+    hold off;
+    grid on;
+    legend('Variance',);
+
+
+end

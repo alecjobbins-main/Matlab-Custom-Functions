@@ -1,0 +1,15 @@
+function [] = probability(x, N, dx, edges)
+    figure();
+    histogram(x,edges);
+    hold on;
+    Ni = floor(1.87*(N^(0.4)));
+    plot(edges, Ni*ones(size(edges)))
+    hold off;
+    legend('Histogram of Data', "Rule of Thumb Number of Occurances (in 1+ bin(s)) = " + num2str(Ni));
+    
+
+    [Values, Edges] = histcounts(x, [-5:dx:5]);
+    Edges = 0.5*(Edges(1:end-1) + Edges(2:end));
+
+
+end

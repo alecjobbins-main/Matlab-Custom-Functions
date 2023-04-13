@@ -1,0 +1,10 @@
+function [R_tau, rho_tau, tau] = autocorrelation(x, fsamp)
+    N = length(x);
+    R_tau = xcorr(x)/N;
+    m = -(N-1):1:(N-1);
+    tau = m*(1/fsamp);
+    index = tau==0;
+    rho_tau = R_tau / R_tau(index);
+    rho_tau_2 = R_tau / var(x);
+    if r
+end

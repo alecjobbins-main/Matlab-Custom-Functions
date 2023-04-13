@@ -1,0 +1,17 @@
+function [] = probability_joint(x, y, dx, dy, edgesX, edgesY)
+    figure();
+    histogram2(x,y,edgesX, edgesY);
+    grid on;
+    xlabel('x signal', 'FontSize', 16);
+    ylabel('y signal', 'FontSize', 16);
+    title('Joint Histogram', 'FontSize', 14);
+    
+
+    [Counts, X2, Y2] = histcounts2(x, y, edgesX, edgesY);
+
+    X2=X2(1:end-1) + dx/2;
+    Y2=Y2(1:end-1) + dy/2;
+
+    [C, h2] = contour(X2,Y2,Counts'/(sum(Counts(:))*dx*dy))
+
+end
